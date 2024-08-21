@@ -1,7 +1,9 @@
+import os
 import torch
 import random
 import logging
 import numpy as np
+import argparse
 
 def get_logger(filepath, log_info):
     logger = logging.getLogger(filepath)
@@ -27,3 +29,20 @@ def init_seed(args):
     torch.cuda.manual_seed_all(args.seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='training config parser')
+    parser.add_argument(
+        '--config',
+        help='train config file path',
+        default='configs/train_logo.py')
+    args = parser.parse_args()
+    from mmcv import Config
+    cfg = Config.fromfile(args.config)
+    return cfg
+
+def init_gpu(cfg):
+    os.environ['CUDA_VISIBLE_DEVICES'] = cfg.multi_gpu
+    multi_gpu = False if len(cfg.multi_gpu.split(",")) <= 0 else True
+    if multi_gpu:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
