@@ -1,35 +1,38 @@
 import os
+import torch.nn as nn
+from utils.utils import parse_args, init_seed, init_gpu
+from dataloader import build_dataloader
+from models import build_backbone, build_neck, build_head
 
-import torch
-
-from opts import *
-from utils import *
-
-
-
-
-
-def main():
-    # configs
-    args = parse_opt()
-    init_seed(args)
-
-    # gpu settings
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.multi_gpu
-    multi_gpu = False if len(args.multi_gpu.split(",")) <= 0 else True
-    if multi_gpu:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # dataloaders
-    if args.dataset == "logo":
-        from datasets.dataloader_logo import *
-        data_loaders = get_dataloader(args)
-    elif args.dataset == "gym":
-        from datasets.dataloader_gymnastic import *
-        data_loaders = get_dataloader(args)
+def main(cfg):
     
-    # networks
-    backbone = I3D(num_classes = 400, modality = 'rgb')#.cuda()
+    # necessary modules
+    init_seed(cfg)
+    init_gpu(cfg)
+    
+    # dataloader
+    dataloader = build_dataloader(cfg)
+    
+    # network
+    backbone = build_backbone(cfg)
+    neck = build_neck(cfg)
+    head = build_head(cfg)
+    
+    if cfg.multi_gpu:
+        backbone = nn.DataParallel(backbone)
+        head = nn.DataParallel(head)
+        neck = nn.DataParallel(neck)
+        
+    if cfg.get('load_from', None) and os.path.exists(cfg.load_from):
+        
+    # loss function
+    
+    # optimizer and scheduler
+    
+    #
+    
+
 
 if __name__ == '__main__':
-    main()
+    cfg = parse_args()
+    main(cfg)
