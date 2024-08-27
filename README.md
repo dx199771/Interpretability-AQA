@@ -1,3 +1,4 @@
+# Code will be released soon.
 # Interpretable Long-term Action Quality Assessment
 The official PyTorch implementation of the paper "Interpretable Long-term Action Quality Assessment".
 
