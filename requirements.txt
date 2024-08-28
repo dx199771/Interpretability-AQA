@@ -1,0 +1,14 @@
+einops==0.8.0
+matplotlib==3.4.3
+matplotlib==3.7.5
+mmcv==2.1.0
+mmcv_full==1.7.2
+numpy==1.23.0
+numpy==1.24.4
+opts==0.1.1
+Pillow==10.4.0
+scipy==1.5.4
+skimage==0.0
+torch==2.0.1
+torchvision==0.15.2
+tqdm==4.66.4
