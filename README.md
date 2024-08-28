@@ -12,7 +12,7 @@ Please download the dataset form these link:
 ### [LOng-form GrOup (LOGO)](https://github.com/shiyi-zh0408/LOGO)
 - Video_Frames:  [Google Drive](https://drive.google.com/file/d/1-MpOQSo72TZhoTzr8bqviDezi-ge7o6V/view?usp=sharing) or [baidu Drive](https://pan.baidu.com/s/1GNi_ZcbSq6oi2SEX_iuFwA?pwd=v329) (extract number: v329) 
 - Annotations and Split: [Google Drive](https://drive.google.com/drive/folders/1i4lG1_iwP0lHMCvyYlqS8h7YRQCSRFyA?usp=drive_link) or [Baidu Drive](https://pan.baidu.com/s/1UwlGzCeq_UjY0GbOnaHXxw?pwd=ojgf) (extract number: ojgf)
-- We also provide Video Swin Transformer (VST) feature for LOGO dataset [Baidu_Drive](https://drive.google.com/drive/folders/1i4lG1_iwP0lHMCvyYlqS8h7YRQCSRFyA?usp=drive_link)
+- We also provide Video Swin Transformer (VST) feature for LOGO dataset [Baidu_Drive](https://pan.baidu.com/s/1zFZgyJ1CCVd67ZfQZyYC6g) (extract number: 9ojl)
 ### [Figure Skating Video (Fis-V)](https://github.com/chmxu/MS_LSTM)
 - The raw videos have been uploaded. You can download from here [Fis-V](https://drive.google.com/file/d/1FQ0-H3gkdlcoNiCe8RtAoZ3n7H1psVCI/view?usp=sharing).
 - The features and label files of Fis-V dataset can be download from here [Fis-V](https://1drv.ms/u/s!AqXkt0Mw7p9llWEihc533CB87U5P?e=EadhCo) from [GDLT](https://github.com/xuangch/CVPR22_GDLT) repository.
@@ -52,7 +52,15 @@ This code was tested on xx and requires:
 
 ### Setup environment
 
-Setup conda env:
+#### a. Create a conda virtual environment and activate it.
+```
+conda create -n interaqa python=3.8 -y
+conda activate interaqa
+```
+#### b. Install PyTorch and required packages
+```
+pip install -r requirements.txt
+```
 
 ### Train a Model
 
@@ -68,7 +76,7 @@ python3 main.py --config configs/train_rg.py
 ```
 python3 main.py --config configs/train_fisv.py
 ```
-### Citation
+## Citation
 If our project is helpful for your research, please consider citing:
 ```
 @misc{dong2024interpretablelongtermactionquality,
@@ -82,5 +90,5 @@ If our project is helpful for your research, please consider citing:
 }
 ```
 
-### Acknowledgement
+## Acknowledgement
 
