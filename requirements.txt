@@ -1,5 +1,5 @@
 einops==0.8.0
-matplotlib==3.4.3
+#matplotlib==3.4.3
 matplotlib==3.7.5
 mmcv==2.1.0
 mmcv_full==1.7.2
