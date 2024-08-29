@@ -2,7 +2,7 @@
 # Interpretable Long-term Action Quality Assessment
 The official PyTorch implementation of the paper accepted to British Machine Vision Conference (BMVC) 2024: "Interpretable Long-term Action Quality Assessment".
 
-[![arXiv](https://img.shields.io/badge/arXiv-2406.07524-red.svg)](https://arxiv.org/abs/2408.11687)
+[![arXiv](https://img.shields.io/badge/arXiv-2408.11687-red.svg)](https://arxiv.org/abs/2408.11687)
 
 
 
