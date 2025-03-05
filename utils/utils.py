@@ -36,9 +36,28 @@ def parse_args():
         '--config',
         help='train config file path',
         default='configs/train_logo.py')
+    parser.add_argument("--pe", type=str, default="default_pe")
+    parser.add_argument("--query_var", type=float, default=1)
+    parser.add_argument("--att_loss", action="store_true", default=False)
+    parser.add_argument("--dino_loss", action="store_true", default=False)
+    parser.add_argument("--label", type=str, default="TES")
+    parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--load_from", type=str, default="")
     args = parser.parse_args()
+    
+    
     from mmcv import Config
     cfg = Config.fromfile(args.config)
+    cfg.pe = args.pe
+    cfg.load_from = args.load_from
+    cfg.query_var = args.query_var
+    cfg.att_loss = args.att_loss
+    cfg.dino_loss = args.dino_loss
+    cfg.seed = args.seed
+    if "label" in cfg:
+        cfg.label = args.label
+    else:
+        cfg.label = "logo"
     return cfg
 
 def init_gpu(cfg):
@@ -46,3 +65,4 @@ def init_gpu(cfg):
     multi_gpu = False if len(cfg.multi_gpu.split(",")) <= 0 else True
     if multi_gpu:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    return multi_gpu, device

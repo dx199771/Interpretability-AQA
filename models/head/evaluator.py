@@ -15,7 +15,6 @@ class Evaluator_weighted(nn.Module):
         self.softmax = nn.Softmax(dim=-2)
         
     def forward(self, x):
-
         x_mean = torch.relu(self.layer1_mean(x))
         x_mean = torch.relu(self.layer2_mean(x_mean))
         x_mean = self.layer3_mean(x_mean)

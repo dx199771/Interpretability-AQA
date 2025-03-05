@@ -10,7 +10,7 @@ class Fisv_Dataset(torch.utils.data.Dataset):
         self.subset = subset
         self.transforms = transform
         
-        self.label_target = args.fisv_label
+        self.label_target = args.label
         self.data =  args.fisv_dir
         self.read_data_label(args)
         if self.subset == "train":
@@ -29,7 +29,7 @@ class Fisv_Dataset(torch.utils.data.Dataset):
         self.test_label = {}
         with open(os.path.join(args.fisv_dir,"train.txt"),"r") as f:
             train_label_raw = f.readlines()
-        for i in train_label_raw:            
+        for i in train_label_raw:          
             if self.label_target == "TES":        
                 clip_score = float(i.split("\t")[0].split(" ")[1])
             elif self.label_target == "PCS":        

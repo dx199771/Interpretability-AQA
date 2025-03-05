@@ -4,6 +4,7 @@ import os
 import glob
 from PIL import Image
 import torch.nn.functional as F
+from utils.dataloader_utils import worker_init_fn, get_video_trans
 
 
 class Gym_Dataset(torch.utils.data.Dataset):
@@ -11,7 +12,7 @@ class Gym_Dataset(torch.utils.data.Dataset):
         self.subset = subset
         self.transforms = transform
         
-        self.label_target = args.gym_label
+        self.label_target = args.label
         self.read_data_label(args)
         if self.subset == "train":
             self.dataset = self.train_file   
@@ -63,7 +64,7 @@ class Gym_Dataset(torch.utils.data.Dataset):
         clip_file = self.dataset[index][1]
         
         
-        data["feats"] = np.load(os.path.join("../detr-aqa-encoder/GDLT_data/swintx_avg_fps25_clip32",f"{clip}.npy"))
+        data["feats"] = np.load(os.path.join("/mnt/welles/scratch/datasets/condor/backup/detr-aqa/GDLT_data/swintx_avg_fps25_clip32",f"{clip}.npy"))
 
         if len(data["feats"]) > 68:
             st = np.random.randint(0, len(data["feats"]) - 68)
@@ -94,6 +95,8 @@ def get_dataloader(args):
         subset = list(range(0, len(data_loader_train), args.subset))
         #odds = list(range(1, len(trainset), 2))
         data_loader_train = torch.utils.data.Subset(data_loader_train, subset)
+    
+    # import pdb; pdb.set_trace()
     
     train_dataloader = torch.utils.data.DataLoader(data_loader_train, batch_size=args.bs_train,
                                             shuffle=True,num_workers = int(args.num_workers),

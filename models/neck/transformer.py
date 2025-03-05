@@ -13,6 +13,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn, Tensor
 
+from .deformatt import DeformAttn
 class TransformerEncoder(nn.Module):
 
     def __init__(self, encoder_layer, num_layers, norm=None):
@@ -97,13 +98,13 @@ class TransformerEncoderLayer(nn.Module):
     
 class TransformerDecoder(nn.Module):
 
-    def __init__(self, decoder_layer, num_layers, norm=None, return_intermediate=False):
+    def __init__(self, decoder_layer, num_layers, norm=None, return_intermediate=False,global_feat=False):
         super().__init__()
         self.layers = _get_clones(decoder_layer, num_layers)
         self.num_layers = num_layers
         self.norm = norm
         self.return_intermediate = return_intermediate
-
+        self.global_feat = global_feat
     def forward(self, tgt, memory,
                 tgt_mask: Optional[Tensor] = None,
                 memory_mask: Optional[Tensor] = None,
@@ -119,14 +120,16 @@ class TransformerDecoder(nn.Module):
         self_maps = []
         cross_maps = []
         memorys = []
+        if self.global_feat:
+            memory = torch.cat((memory, memory.mean(0).unsqueeze(0)))
         for n,layer in enumerate(self.layers):
             
             residual=True
-           
             if n ==1 and train==False:
                 plot =True
             else:
                 plot= False
+            
             
             output,ws,self_map,cross_map, memory = layer(output, memory, tgt_mask=tgt_mask,
                            memory_mask=memory_mask,
@@ -171,7 +174,9 @@ class TransformerDecoderLayer(nn.Module):
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
         self.dropout3 = nn.Dropout(dropout)
-
+        
+        # self.conv1d = nn.Conv1d(in_channels=48, out_channels=48, kernel_size=3, padding=1)
+        
         self.activation = _get_activation_fn(activation)
         self.normalize_before = normalize_before
     def with_pos_embed(self, tensor, pos: Optional[Tensor]):
@@ -191,12 +196,14 @@ class TransformerDecoderLayer(nn.Module):
         
         tgt2,ws = self.self_attn(q, k, value=tgt, attn_mask=tgt_mask,
                               key_padding_mask=tgt_key_padding_mask)
+        
+        
         tgt = self.norm1(tgt)
         tgt2,ws = self.multihead_attn(query=self.with_pos_embed(tgt, query_pos),
                                    key=self.with_pos_embed(memory, pos),
                                    value=memory, attn_mask=memory_mask,
                                    key_padding_mask=memory_key_padding_mask)
-
+        
 
         # attn_weights [B,NUM_Q,T]
         tgt = tgt + self.dropout2(tgt2)
@@ -224,28 +231,36 @@ class TransformerDecoderLayer(nn.Module):
         #plt.hist(tgt2[0,0].detach().cpu().numpy())
         #plt.savefig("hist.png")
         #
+        
         q = k = self.with_pos_embed(tgt2, query_pos)
-        #import pdb; pdb.set_trace()
+        
+        # q = k =tg torch.cat((q, q.mean(0).unsqueeze(0)))
         self_map,ws = self.self_attn(q, k, value=tgt2, attn_mask=tgt_mask,
                               key_padding_mask=tgt_key_padding_mask)
-        #import pdb; pdb.set_trace()  
+        # self_map = self.conv1d(self_map.permute(1,0,2)).permute(1,0,2)
+        
+        # import pdb; pdb.set_trace()  
         #import pdb; pdb.set_trace()
-        # if plot:
-        #     plt.cla()
-        #     plt.clf()
-        #     #import pdb; pdb.set_trace()
+        if False:#plot:
+            aa = F.softmax(torch.div(torch.matmul(self_map.transpose(0,1), self_map.transpose(0,1).transpose(-1,-2)), self_map.size(-1)),dim=1).cpu().detach().numpy()
+            #aa = torch.sqrt(torch.matmul(self_map.transpose(0,1), self_map.transpose(0,1).transpose(-1,-2)))
+            # import pdb; pdb.set_trace()
             
-        #     aa = F.softmax(torch.div(torch.matmul(self_map.transpose(0,1), self_map.transpose(0,1).transpose(-1,-2)), self_map.size(-1)),dim=1)
-        #     #aa = torch.sqrt(torch.matmul(self_map.transpose(0,1), self_map.transpose(0,1).transpose(-1,-2)))
-        #     plt.imshow(aa.cpu().detach().numpy()[0], cmap='hot', interpolation='nearest')
-        #     #print(aa)
-        #     plt.colorbar()
-        #     #plt.savefig("atmap.png")
-        #     #import pdb; pdb.set_trace()
+            plt.cla()
+            plt.clf()
+            plt.imshow(aa[0], cmap='hot', interpolation='nearest')
+            
+            
+        # #     #print(aa)
+            plt.colorbar()
+            plt.savefig("atmap.png")
+            # plt.close()
+        #     #
         tgt = self_map + self.dropout1(self_map)
+        
         tgt2 = self.norm2(tgt)
-        #
-        #import pdb; pdb.set_trace()
+        
+        
         cross_map,attn_weights = self.multihead_attn(query=self.with_pos_embed(tgt2, query_pos),
                                    key=self.with_pos_embed(memory, pos), #.transpose(0,1)
                                    value=memory, attn_mask=memory_mask,

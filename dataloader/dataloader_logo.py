@@ -21,14 +21,17 @@ class Logo_Dataset(torch.utils.data.Dataset):
         else:
             self.dataset = self.test_split
         
-        self.presave = args.presave
-        if self.presave:
-            self.presave_data = np.load(f"./{self.subset}.npy",allow_pickle=True)
+        self.presave = True
+        self.presave_path = args.presave
+        # import pdb; pdb.set_trace
+        # if self.presave:
+        #     self.presave_data = np.load(f"./{self.subset}.npy",allow_pickle=True)
         
     def load_img_seq(self, clip_name):
-       
+        
+
         if self.presave:
-            video = np.load(f"{self.presave}/{clip_name[0]}_{clip_name[1]}.npy",allow_pickle=True)
+            video = np.load(f"{self.presave_path}/{clip_name[0]}_{clip_name[1]}.npy",allow_pickle=True)
             return video, None
         else:
             image_list = sorted(self.label_file[clip_name])
@@ -53,7 +56,7 @@ class Logo_Dataset(torch.utils.data.Dataset):
         
         with open(os.path.join(args.swim_label,"formation_dict.pkl"), "rb") as f:
             self.formation_dict = pickle.load(f)
-        
+
         with open(os.path.join(args.swim_label,"train_split3.pkl"), "rb") as f:
             self.train_split = pickle.load(f)
 
@@ -61,15 +64,15 @@ class Logo_Dataset(torch.utils.data.Dataset):
             self.test_split = pickle.load(f)
     
     def __getitem__(self, index):  
+        # print(1)
         data = {}
         clip = self.dataset[index]
-        
+        # import pdb; pdb.set_trace()
         data["video"], data["actions"] = self.load_img_seq(clip) 
         data["actions"] = torch.tensor(1) #dummy
         data["score"] = self.anno_dict[clip][1] / 100
         if self.presave:
             data["feats"] = data["video"]
-            
         return data, clip
     def __len__(self,):
         return len(self.dataset)
