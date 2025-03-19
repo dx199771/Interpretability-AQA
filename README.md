@@ -1,5 +1,5 @@
-# Interpretable Long-term Action Quality Assessment
-The official PyTorch implementation of the paper "Interpretable Long-term Action Quality Assessment".
+# UIL-AQA: Uncertainty-aware, Interpretable Long-term Action Quality Assessment
+The official PyTorch implementation of the paper "UIL-AQA: Uncertainty-aware, Interpretable Long-term Action Quality Assessment", which is a substantial extention of our BMVC 2024 paper "Interpretable Long-term Action Quality Assessment".
 
 [![arXiv](https://img.shields.io/badge/arXiv-2408.11687-red.svg)](https://arxiv.org/abs/2408.11687)
 
