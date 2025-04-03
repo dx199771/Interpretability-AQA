@@ -46,8 +46,7 @@ $DATASET_ROOT
 └──
 ```
 
-## Getting started
-This code was tested on xx and requires:
+
 
 ### Setup environment
 
