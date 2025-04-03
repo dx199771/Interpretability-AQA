@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.so
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+Pipfile.lock
+poetry.lock
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# System files
+.DS_Store
+Thumbs.db
+
+ckpts/*.pt

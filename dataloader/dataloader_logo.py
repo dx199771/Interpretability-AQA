@@ -23,9 +23,6 @@ class Logo_Dataset(torch.utils.data.Dataset):
         
         self.presave = True
         self.presave_path = args.presave
-        # import pdb; pdb.set_trace
-        # if self.presave:
-        #     self.presave_data = np.load(f"./{self.subset}.npy",allow_pickle=True)
         
     def load_img_seq(self, clip_name):
         
@@ -64,10 +61,8 @@ class Logo_Dataset(torch.utils.data.Dataset):
             self.test_split = pickle.load(f)
     
     def __getitem__(self, index):  
-        # print(1)
         data = {}
         clip = self.dataset[index]
-        # import pdb; pdb.set_trace()
         data["video"], data["actions"] = self.load_img_seq(clip) 
         data["actions"] = torch.tensor(1) #dummy
         data["score"] = self.anno_dict[clip][1] / 100
