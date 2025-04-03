@@ -16,7 +16,6 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
     exp_handler.setFormatter(exp_formatter)
     logger_exp.addHandler(exp_handler)
     
-    # weight_method = NashMTL(n_tasks=3, device='cuda')
     rho_best, epoch_best, rl2_best = 0, 0, 0
     test_srcc = []
     
@@ -43,10 +42,8 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
             self_map_lst = []
             cross_map_lst = []
             losses = 0
-            #import pdb; pdb.set_trace()
             for data_ in data_loaders[split]:
                 data, clip_info = data_
-                # import pdb; pdb.set_trace()
                 score = data["score"].float().cuda()
                 video = data["video"]
                 if cfg.split_feats:
@@ -73,27 +70,9 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                 
                 kld_loss, self_map_lst, cross_map_lst = attention_loss(graph_attn, kld, self_map_lst, cross_map_lst)
                 # self_map_vis(graph_attn)
-                if epoch > 5000 and test_only:
-                    # inter_vis(means,weight,clip_info,cfg.dataset_name)
-                    user_study(means,weight,clip_info,cfg.dataset_name)
-                    # print(f"inter_results/LOGO: Video: {clip_info[0][0]}, Seq: {clip_info[1][0].item()}")
-                    # import pdb; pdb.set_trace()
-                # plt.cla()
-                # plt.clf()
-                # plt.figure(figsize=(8, 6))
-                # quality = means.squeeze(-1)[0].detach().cpu().numpy()
-                # difficulty = weight.squeeze(-1)[0].detach().cpu().numpy()
-                # plt.plot(np.arange(68)[::4],  (quality * difficulty * 125 - 1)[::4], marker='o', color='b', linestyle='-', linewidth=2, markersize=8)
-                # print(quality * difficulty * 250)
-                # # 添加标题和标签
-                # plt.ylim(-0.5, 1)
-                # plt.title('Score vs. Clip', fontsize=16)
-                # plt.xlabel('Clip Number', fontsize=14)
-                # plt.ylabel('Score', fontsize=14)
-
-                # # 显示网格
-                # plt.grid(True)
-                # plt.savefig("vis.png")
+                # if epoch > 5000 and test_only:
+                #     user_study(means,weight,clip_info,cfg.dataset_name)
+             
                 
                 
                 if cfg.dino_loss:
@@ -103,25 +82,13 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                         loss = mes_loss + kld_loss
                 else:
                     loss = mes_loss
-                # import pdb; pdb.set_trace()
-                # if split=="train":
-                #     losses_cat = torch.stack([loss.mean(), mes_loss.mean(), kld_loss.mean()])
-                    
-                #     weighted_loss, extra_outputs = weight_method.get_weighted_loss(
-                #             losses=losses_cat,
-                #             shared_parameters=list(neck.parameters()) +list(head.parameters()),
-                #             )
-                
-                #     loss = weighted_loss
+          
                 losses += loss
                 rho, p, rl2 = cal_spearmanr_rl2(pred_scores, true_scores)
                 
                 
                 if split=="train":
-                    scheduler.step()
-                    # for param_group in optimizer.param_groups:
-                    #     print("当前学习率:", param_group['lr'])
-                    
+                    scheduler.step()                    
                     optimizer.zero_grad()
                     loss.backward()
                     optimizer.step()
@@ -135,7 +102,6 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                 epoch_best = epoch
                 rl2_best = rl2
                 log_and_print(base_logger, '-----New best found!-----')
-                # import pdb; pdb.set_trace()
                 if not test_only:
                     torch.save({'epoch': epoch,
                                 'backbone': backbone.state_dict(),
@@ -146,7 +112,7 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                 
                 
 
-    if test_only:                # 记录日志
+    if test_only:                
         logger_exp.info(f"test dataset: {cfg.dataset_name}, seed: {cfg.seed}, label: {cfg.label}, query_var: {cfg.query_var}, pe: {cfg.pe}, att_loss: {cfg.att_loss}, dino_loss:{cfg.dino_loss}, num_layers: {cfg.num_layers}, SRCC: {rho_best}, RL2: {rl2_best}")
     # logger_exp.info(f"dataset: {cfg.dataset_name}, seed: {cfg.seed}, label: {cfg.label}, query_var: {cfg.query_var}, pe: {cfg.pe}, att_loss: {cfg.att_loss}, dino_loss:{cfg.dino_loss}, num_layers: {cfg.num_layers}, SRCC: {rho_best}, RL2: {rl2_best}")
             
