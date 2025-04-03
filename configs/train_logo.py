@@ -7,7 +7,7 @@ dataset_name = "logo"
 swim_dir = "/mnt/welles/scratch/datasets/condor/backup/logo/Video_result" #"./data/logo/Video_result"
 swim_label = "/mnt/welles/scratch/datasets/condor/backup/logo/LOGO Anno&Split" #"./data/logo/LOGO Anno&Split"
 presave =  "/mnt/welles/scratch/datasets/condor/backup/logo/logo_feats"
-presave =  "/home/xu/repo/Interpretability-AQA/i3d_feats"
+# presave =  "/home/xu/repo/Interpretability-AQA/i3d_feats" # i3d feature
 
 # dataloader config
 subset = 0
@@ -28,7 +28,7 @@ i3d = dict(
 vivit = dict(
     backbone="ViViT",
 )
-
+label = "logo"
 neck = "TQN"
 head = "weighted"
 # query number

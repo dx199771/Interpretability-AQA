@@ -20,9 +20,9 @@ class Logo_Dataset(torch.utils.data.Dataset):
             self.dataset = self.train_split    
         else:
             self.dataset = self.test_split
-        
-        self.presave = True
-        self.presave_path = args.presave
+        self.presave = bool(args.presave)
+        if self.presave:
+            self.presave_path = args.presave
         
     def load_img_seq(self, clip_name):
         

@@ -52,7 +52,6 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                     if "feats" in data:
                         clip_feats = data["feats"].cuda()
                     else:
-                        import pdb; pdb.set_trace()
                         bs, frame, feats  = video.shape
                         video = video.reshape(video.shape[0],3,48,16,224,224).cuda()
                         clip_feats = torch.empty(bs, video.shape[2], feats).cuda()
