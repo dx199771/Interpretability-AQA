@@ -18,7 +18,7 @@ def build_neck(cfg):
     
     if neck == "TQN":
         from models.neck.TQN import TQN
-        return TQN(1024,cfg.q_number,cfg.query_var,cfg.pe,N=cfg.num_layers).cuda()
+        return TQN(1024,cfg.q_number,cfg.query_var,cfg.pe,N=cfg.num_layers,max_len=cfg.max_len).cuda()
     elif neck == "TQT":
         from models.neck.TQT import ActionDecoder
         return ActionDecoder().cuda()

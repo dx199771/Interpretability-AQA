@@ -1,5 +1,5 @@
 
-seed = 66
+seed = 666
 multi_gpu = "0"
 
 # dataset config (logo, gym, fisv)
@@ -16,7 +16,7 @@ bs_test = 1
 num_workers = 0
 
 # network config (i3d, vivit)
-backbone = "i3d"
+backbone = "vivit"
 
 i3d = dict(
     backbone="I3D",
@@ -32,14 +32,15 @@ label = "logo"
 neck = "TQN"
 head = "weighted"
 # query number
-q_number = 95 #48
+q_number = 48 #48
 # variange for initilize query
-query_var = 2
+query_var = 0.5
 # positional embedding method ["query_pe","query_memory_pe","no"]
 pe = "query_pe" 
 att_loss = True
 dino_loss = True
 num_layers = 2
+max_len = 103
 
 # log and wandb
 # training config

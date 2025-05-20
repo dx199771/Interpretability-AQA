@@ -42,8 +42,9 @@ query_var = 5
 pe = "query_pe" 
 att_loss = True
 dino_loss = True
+max_len = 136
 
-num_layers = 1
+num_layers = 2
 
 
 

@@ -22,7 +22,7 @@ def main(cfg):
     backbone = build_backbone(cfg)
     neck = build_neck(cfg)
     head = build_head(cfg)
-    
+    import pdb; pdb.set_trace()
     if multi_gpu:
         backbone = nn.DataParallel(backbone)
         head = nn.DataParallel(head)

@@ -22,13 +22,13 @@ def tfm_mask(seg_per_video,temporal_mutliplier=1):
 
 
 class TQN(nn.Module):
-    def __init__(self,d_model, num_queries, query_var=1, pe="no", H=4, N=2, feature_dim = 1024):
+    def __init__(self,d_model, num_queries, query_var=1, pe="no", H=4, N=2, feature_dim=1024, max_len=136):
         super(TQN, self).__init__()
         self.d_model = d_model
         self.num_queries = num_queries
         self.query_var = query_var
         self.pe = pe
-        
+        self.max_len = max_len
         #encoder_layer = TransformerEncoderLayer(self.d_model, H, 1024,
                                                 #0.5, 'relu', normalize_before=True)
         #encoder_norm = nn.LayerNorm(d_model)
@@ -49,7 +49,7 @@ class TQN(nn.Module):
         #self.query_embed = query_embed(input_indices)
 
         self.dropout_feas = nn.Dropout(0.5)
-        self.pos_encoder = PositionalEncoding(self.d_model)
+        self.pos_encoder = PositionalEncoding(self.d_model, max_len= self.max_len)
        
         # self.query_mu = nn.Parameter(torch.zeros(self.num_queries, self.d_model))
         # self.query_logvar = nn.Parameter(torch.full((self.num_queries, self.d_model), -3.0))

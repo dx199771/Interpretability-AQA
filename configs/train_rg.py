@@ -39,6 +39,7 @@ query_var = 2
 pe = "query_pe" 
 att_loss = True
 dino_loss = True
+max_len = 103
 
 label = "Ribbon"
 num_layers = 2
