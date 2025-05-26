@@ -51,6 +51,7 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                     
                     if "feats" in data:
                         clip_feats = data["feats"].cuda()
+                        # import pdb; pdb.set_trace()
                     else:
                         bs, frame, feats  = video.shape
                         video = video.reshape(video.shape[0],3,48,16,224,224).cuda()
@@ -72,7 +73,6 @@ def run(cfg, base_logger, network, data_loaders, kld, mse, optimizer, scheduler,
                 # if epoch > 5000 and test_only:
                 #     user_study(means,weight,clip_info,cfg.dataset_name)
              
-                
                 
                 if cfg.dino_loss:
                     probs = probs + torch.randn_like(probs).normal_(mean=0.0, std=0.05) #

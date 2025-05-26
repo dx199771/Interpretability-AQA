@@ -8,7 +8,7 @@ def build_backbone(cfg):
         return I3D().cuda()
     elif backbone == "vivit":
         from models.backbone.vivit import ViViT
-        return ViViT().cuda()
+        return ViViT(224, 16, 100, 103).cuda()
     else:
         raise ValueError(f'Unsupported dataset name [{backbone}]')
 

@@ -11,8 +11,8 @@ presave =  "/mnt/welles/scratch/datasets/condor/backup/logo/logo_feats"
 
 # dataloader config
 subset = 0
-bs_train = 64
-bs_test = 1
+bs_train = 48
+bs_test = 24
 num_workers = 0
 
 # network config (i3d, vivit)
@@ -38,7 +38,7 @@ query_var = 0.5
 # positional embedding method ["query_pe","query_memory_pe","no"]
 pe = "query_pe" 
 att_loss = True
-dino_loss = True
+dino_loss = False
 num_layers = 2
 max_len = 103
 
@@ -46,5 +46,7 @@ max_len = 103
 # training config
 split_feats = True
 epoch_num = 1000
+load_from = "/mnt/welles/scratch/datasets/condor/backup/detr-aqa-hinge/ckpts/logo_666_Clubs_True_0.1_query_pe.pt"
+load_from = "/home/xu/repo/Interpretability-AQA/ckpts/i3d_logo_666_logo_True_0.5_query_pe_2.pt"
 # load_from = "/mnt/fast/nobackup/scratch4weeks/xd00101/detr-aqa-hinge/ckpts/logo_i3d_05drop_decoder_2layers_decoupled_20query_softmaxweight_augment_100score_tpti3d_warmup_onlyscore_seed199771_uncertainty_6layers1.pt"
 lr = 1e-4

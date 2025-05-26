@@ -29,31 +29,16 @@ class TQN(nn.Module):
         self.query_var = query_var
         self.pe = pe
         self.max_len = max_len
-        #encoder_layer = TransformerEncoderLayer(self.d_model, H, 1024,
-                                                #0.5, 'relu', normalize_before=True)
-        #encoder_norm = nn.LayerNorm(d_model)
-        #self.encoder = TransformerEncoder(encoder_layer, 4, encoder_norm)
-        
-        global_feat = False
         decoder_layer = TransformerDecoderLayer(self.d_model, H, 1024,
                                         0.7, 'relu',normalize_before=True)
         decoder_norm = nn.LayerNorm(self.d_model)
         self.decoder = TransformerDecoder(decoder_layer, N, decoder_norm,
-                                  return_intermediate=False,global_feat=global_feat)
-        if global_feat == True:
-            self.query_embed = nn.Embedding(self.num_queries+1,self.d_model)
-        else:
-            self.query_embed = nn.Embedding(self.num_queries,self.d_model)
-        #query_embed = nn.Embedding(num_embeddings=6*6, embedding_dim=1024).cuda()
-        #input_indices = torch.LongTensor([[i*6 + j for j in range(6)] for i in range(6)]).cuda()
-        #self.query_embed = query_embed(input_indices)
-
+                                  return_intermediate=False)
+ 
+        self.query_embed = nn.Embedding(self.num_queries,self.d_model)
         self.dropout_feas = nn.Dropout(0.5)
-        self.pos_encoder = PositionalEncoding(self.d_model, max_len= self.max_len)
+        self.pos_encoder = PositionalEncoding(self.d_model, max_len=self.max_len)
        
-        # self.query_mu = nn.Parameter(torch.zeros(self.num_queries, self.d_model))
-        # self.query_logvar = nn.Parameter(torch.full((self.num_queries, self.d_model), -3.0))
-        # self.query_fc = nn.Linear(1024,1024)
     def forward(self, input, train=False):
         input = input.float()
         B = len(input)
@@ -61,17 +46,8 @@ class TQN(nn.Module):
         
        
         if self.query_var != 1:
-            if False:
-                query_mu = self.query_mu.unsqueeze(1).repeat(1,B,1)
-                query_logvar = self.query_logvar.unsqueeze(1).repeat(1,B,1)
-                std = torch.exp(0.5 * query_logvar)
-                noise = torch.randn_like(query_mu).cuda()
-                query_embed = query_mu + std * noise
-                
-            
             query_embed = init.normal_(query_embed, mean=0, std=self.query_var)
-            # query_embed = self.query_fc(query_embed)
-        # import pdb; pdb.set_trace()
+        
         if self.pe == "query_pe":
             pe = None#self.pos_encoder(input[0,:,:]).repeat(B,1,1).transpose(0,1) #+- torch.min(self.pos_encoder(input[0,:,:]).repeat(B,1,1).transpose(0,1))
             query_pe = self.pos_encoder(query_embed[:,0,:]).repeat(B,1,1).transpose(0,1) #+- torch.min(self.pos_encoder(query_embed[:,0,:]).repeat(B,1,1).transpose(0,1))
