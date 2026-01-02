@@ -36,6 +36,8 @@ class TQN(nn.Module):
                                   return_intermediate=False)
  
         self.query_embed = nn.Embedding(self.num_queries,self.d_model)
+        if query_var != 1:
+            init.normal_(self.query_embed.weight, mean=0, std=query_var)
         self.dropout_feas = nn.Dropout(0.5)
         self.pos_encoder = PositionalEncoding(self.d_model, max_len=self.max_len)
        
@@ -43,10 +45,6 @@ class TQN(nn.Module):
         input = input.float()
         B = len(input)
         query_embed = self.query_embed.weight.unsqueeze(1).repeat(1,B,1)#.permute(1,0,2)# self.query_embed.weight.unsqueeze(0).repeat(B, 1, 1)
-        
-       
-        if self.query_var != 1:
-            query_embed = init.normal_(query_embed, mean=0, std=self.query_var)
         
         if self.pe == "query_pe":
             pe = None#self.pos_encoder(input[0,:,:]).repeat(B,1,1).transpose(0,1) #+- torch.min(self.pos_encoder(input[0,:,:]).repeat(B,1,1).transpose(0,1))
